@@ -32,6 +32,7 @@ public class MusicResourse {
     @GetMapping("/{id}")
     public MusicResponse getMusic(@PathVariable("id") Long id){
         Music music = musicRepository.getDetail(id);
+        if (music != null) music.setId(id);
         return MusicResponse.from(music);
     }
 
@@ -48,16 +49,17 @@ public class MusicResourse {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MusicResponse> updateMusic(@RequestBody MusicRequest musicRequest, @PathVariable("id") Long id){
-        Music music = musicRepository.getDetail(id);
-        music.setTitulo(musicRequest.getTitulo());
-        music.setAlbum(musicRequest.getAlbum());
-        music.setAutor(musicRequest.getAutor());
-        music.setGenero(musicRequest.getGenero());
+    public ResponseEntity<MusicResponse> updateMusic(@PathVariable("id") Long id, @RequestBody MusicRequest musicRequest){
+        Music musicToUpdate = musicRepository.getDetail(id);
+        musicToUpdate.setId(id);
+        musicToUpdate.setTitulo(musicRequest.getTitulo());
+        musicToUpdate.setAutor(musicRequest.getAutor());
+        musicToUpdate.setAlbum(musicRequest.getAlbum());
+        musicToUpdate.setGenero(musicRequest.getGenero());
 
-        musicRepository.update(music);
+        Music updatedMusic = musicRepository.update(musicToUpdate);
 
-        return ResponseEntity.ok().body(MusicResponse.from(music));
+        return ResponseEntity.ok().body(MusicResponse.from(updatedMusic));
     }
 
     @DeleteMapping("/{id}")

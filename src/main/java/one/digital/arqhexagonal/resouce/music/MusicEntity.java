@@ -1,10 +1,10 @@
 package one.digital.arqhexagonal.resouce.music;
 
 import jakarta.persistence.*;
-import one.digital.arqhexagonal.application.web.request.MusicRequest;
 import one.digital.arqhexagonal.domain.music.Music;
 
 @Entity
+@Table(name = "music")
 public class MusicEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,15 @@ public class MusicEntity {
     private String genero = "";
 
     public MusicEntity(Long id, String titulo, String autor, String album, String genero){
+        this.id = id;
         this.titulo = titulo;
         this.autor = autor;
         this.album = album;
         this.genero = genero;
+    }
+
+    public MusicEntity() {
+
     }
 
     public Long getId() {

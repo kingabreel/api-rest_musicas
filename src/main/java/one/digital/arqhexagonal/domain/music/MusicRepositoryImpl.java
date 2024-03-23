@@ -1,5 +1,6 @@
 package one.digital.arqhexagonal.domain.music;
 
+import one.digital.arqhexagonal.application.config.MusicNotFoundException;
 import one.digital.arqhexagonal.resouce.music.MusicEntity;
 import one.digital.arqhexagonal.resouce.music.MusicEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ public class MusicRepositoryImpl implements MusicRepository {
     public List<Music> getMusics() {
         return musicEntityRepository.findAll()
                 .stream()
-                .map(musicEntity -> Music.toMusic(musicEntity))
+                .map(musicEntity -> {
+                    Music music = Music.toMusic(musicEntity);
+                    music.setId(musicEntity.getId());
+                    return music;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +48,15 @@ public class MusicRepositoryImpl implements MusicRepository {
 
     @Override
     public Music update(Music music) {
-        musicEntityRepository.save(MusicEntity.from(music));
-        return music;
+        Optional<MusicEntity> optionalMusicEntity = musicEntityRepository.findById(music.getId());
+
+        return optionalMusicEntity.map(existingEntity -> {
+            existingEntity.setTitulo(music.getTitulo());
+            existingEntity.setAutor(music.getAutor());
+            existingEntity.setAlbum(music.getAlbum());
+            existingEntity.setGenero(music.getGenero());
+            MusicEntity updatedEntity = musicEntityRepository.save(existingEntity);
+            return Music.toMusic(updatedEntity);
+        }).orElseThrow(() -> new MusicNotFoundException("Música não encontrada com ID: " + music.getId()));
     }
 }
