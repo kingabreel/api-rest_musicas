@@ -1,15 +1,24 @@
-package one.digital.arqhexagonal.domain.music;
+package one.digital.arqhexagonal.resouce.music;
 
-import one.digital.arqhexagonal.resouce.music.MusicEntity;
+import jakarta.persistence.*;
+import one.digital.arqhexagonal.application.web.request.MusicRequest;
+import one.digital.arqhexagonal.domain.music.Music;
 
-public class Music {
+@Entity
+public class MusicEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "titulo", nullable = false)
     private String titulo;
+    @Column(name = "autor", nullable = false)
     private String autor;
+    @Column(name = "album")
     private String album = "";
+    @Column(name = "genero", nullable = false)
     private String genero = "";
 
-    public Music(String titulo, String autor, String album, String genero){
+    public MusicEntity(Long id, String titulo, String autor, String album, String genero){
         this.titulo = titulo;
         this.autor = autor;
         this.album = album;
@@ -18,9 +27,6 @@ public class Music {
 
     public Long getId() {
         return this.id;
-    }
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitulo() {
@@ -55,12 +61,13 @@ public class Music {
         this.genero = genero;
     }
 
-    public static Music toMusic(MusicEntity musicEntity){
-        return new Music(
-                musicEntity.getTitulo(),
-                musicEntity.getAutor(),
-                musicEntity.getAlbum(),
-                musicEntity.getGenero()
+    public static MusicEntity from(Music music) {
+        return new MusicEntity(
+                music.getId(),
+                music.getTitulo(),
+                music.getAutor(),
+                music.getAlbum(),
+                music.getGenero()
         );
     }
 }
